@@ -1,0 +1,1161 @@
+/* ==========================================================================
+   1. 變數與全域設定 (Variables & Reset)
+   ========================================================================== */
+:root {
+  --bg-dark: #0a0a12;
+  --bg-dark-accent: #0f0f1d;
+  --panel-bg: rgba(22, 22, 39, 0.7);
+  --panel-border: rgba(0, 242, 254, 0.2);
+  --text-color: #f0f0f5;
+  --text-muted: #8a8a9e;
+  
+  /* 霓虹色調 */
+  --neon-cyan: #00f2fe;
+  --neon-purple: #9d4edd;
+  --neon-pink: #ff007f;
+  --neon-green: #39ff14;
+  --neon-blue: #0070f3;
+  --neon-yellow: #ffd700;
+  
+  /* 陰影效果 */
+  --glow-cyan: 0 0 10px rgba(0, 242, 254, 0.5), 0 0 20px rgba(0, 242, 254, 0.2);
+  --glow-purple: 0 0 10px rgba(157, 78, 221, 0.5), 0 0 20px rgba(157, 78, 221, 0.2);
+  --glow-pink: 0 0 10px rgba(255, 0, 127, 0.5), 0 0 20px rgba(255, 0, 127, 0.2);
+  --glow-green: 0 0 10px rgba(57, 255, 20, 0.5), 0 0 20px rgba(57, 255, 20, 0.2);
+  
+  --transition-speed: 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 霓虹背景發光 */
+.neon-bg-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ==========================================================================
+   2. 導覽列與頁尾 (Header, Footer & SPA Tabs)
+   ========================================================================== */
+header {
+  background: rgba(10, 10, 18, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--neon-purple);
+  box-shadow: 0 0 15px rgba(157, 78, 221, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  animation: logo-bounce 2s infinite ease-in-out;
+}
+
+.neon-text {
+  color: var(--neon-purple);
+  text-shadow: var(--glow-purple);
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-color);
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-speed);
+}
+
+.nav-btn:hover {
+  color: var(--neon-cyan);
+  background: rgba(0, 242, 254, 0.05);
+  border-color: var(--panel-border);
+  box-shadow: var(--glow-cyan);
+}
+
+.nav-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--neon-purple) 0%, rgba(157, 78, 221, 0.3) 100%);
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-purple);
+}
+
+/* SPA 切換 */
+.view-section {
+  display: none;
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+.view-section.active {
+  display: block;
+}
+
+/* 頁尾 */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(10, 10, 18, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: auto;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   3. 毛玻璃面板與街機按鈕樣式 (Glassmorphism & Buttons)
+   ========================================================================== */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 242, 254, 0.4);
+}
+
+.panel-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  text-transform: uppercase;
+  border-left: 3px solid var(--neon-cyan);
+  padding-left: 0.5rem;
+}
+
+/* 街機按鈕系統 */
+.arcade-btn {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #fff;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.arcade-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: skewX(-30deg);
+  transition: 0.75s;
+  pointer-events: none;
+}
+
+.arcade-btn:hover::after {
+  left: 120%;
+}
+
+.arcade-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.arcade-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.arcade-btn.purple {
+  background: linear-gradient(135deg, var(--neon-purple), #7b2cbf);
+  box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+}
+.arcade-btn.purple:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(157, 78, 221, 0.8);
+}
+
+.arcade-btn.blue {
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  box-shadow: 0 0 10px rgba(0, 114, 255, 0.4);
+}
+.arcade-btn.blue:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(0, 114, 255, 0.8);
+}
+
+.arcade-btn.red {
+  background: linear-gradient(135deg, #d31027, #ea384d);
+  box-shadow: 0 0 10px rgba(211, 16, 39, 0.4);
+}
+.arcade-btn.red:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(211, 16, 39, 0.8);
+}
+
+.arcade-btn.green {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  box-shadow: 0 0 10px rgba(56, 239, 125, 0.4);
+}
+.arcade-btn.green:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(56, 239, 125, 0.8);
+}
+
+.arcade-btn.mini {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   4. 街機遊戲區 (Game View Layout & Engine UI)
+   ========================================================================== */
+.content-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  flex: 1;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.canvas-wrapper {
+  background: rgba(5, 5, 10, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+#hold-canvas, #next-canvas {
+  background-color: #050508;
+  display: block;
+}
+
+/* 控制說明 */
+.control-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.guide-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.key {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  min-width: 32px;
+  text-align: center;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+}
+
+/* 中間遊戲面板 */
+.main-game-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.game-header {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.db-status-badge {
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.db-status-badge.connected-mongo {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+}
+
+.db-status-badge.connected-local {
+  border-color: var(--neon-yellow);
+  color: var(--neon-yellow);
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* 遊戲 Canvas 容器與暫停遮罩 */
+.board-wrapper {
+  position: relative;
+  border: 4px solid var(--neon-purple);
+  border-radius: 12px;
+  box-shadow: var(--glow-purple), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  background: #030305;
+  overflow: hidden;
+  width: 308px; /* 300px + 8px borders */
+  height: 608px;
+}
+
+#game-canvas {
+  background-color: #030305;
+  display: block;
+}
+
+.pause-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 18, 0.85);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  animation: fadeIn 0.2s ease;
+}
+
+.pause-overlay.active {
+  display: flex;
+}
+
+.pause-content {
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+}
+
+.pause-content h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+  color: var(--neon-pink);
+  text-shadow: var(--glow-pink);
+}
+
+.pause-content p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 下方控制按鈕 */
+.game-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 308px;
+}
+
+.game-controls .arcade-btn {
+  flex: 1;
+}
+
+/* 統計數據面板 */
+.stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.8rem;
+  text-align: right;
+}
+
+.stat-box:last-child {
+  margin-bottom: 0;
+}
+
+.stat-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+/* ==========================================================================
+   5. 排行榜介面 (Leaderboard Styling)
+   ========================================================================== */
+.leaderboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.leaderboard-header h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.text-gold {
+  color: var(--neon-yellow);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.leaderboard-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(5, 5, 10, 0.4);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+  padding: 1rem 1.2rem;
+  font-size: 0.95rem;
+}
+
+.leaderboard-table th {
+  background: rgba(157, 78, 221, 0.15);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  border-bottom: 2px solid var(--neon-purple);
+  text-transform: uppercase;
+}
+
+.leaderboard-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* 前三名冠亞季軍特效 */
+.leaderboard-table tbody tr:nth-child(1) { color: var(--neon-yellow); font-weight: bold; }
+.leaderboard-table tbody tr:nth-child(2) { color: #d1d1d6; font-weight: bold; }
+.leaderboard-table tbody tr:nth-child(3) { color: #cc7a00; font-weight: bold; }
+
+.rank-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+tr:nth-child(1) .rank-badge {
+  background: linear-gradient(135deg, var(--neon-yellow), #b8860b);
+  color: #000;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+tr:nth-child(2) .rank-badge {
+  background: linear-gradient(135deg, #e5e5ea, #8e8e93);
+  color: #000;
+}
+tr:nth-child(3) .rank-badge {
+  background: linear-gradient(135deg, #cd7f32, #8b4513);
+  color: #fff;
+}
+tr:nth-child(n+4) .rank-badge {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+.loading-text {
+  padding: 3rem !important;
+  color: var(--text-muted);
+}
+
+.leaderboard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   6. 履歷與學習時光軸介面 (Portfolio & Timeline)
+   ========================================================================== */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* 開發者名片 */
+.profile-card {
+  text-align: center;
+}
+
+.avatar-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.avatar-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid var(--neon-cyan);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--glow-cyan);
+  background: rgba(0, 242, 254, 0.05);
+  animation: pulse-ring 2.5s infinite;
+}
+
+.profile-icon {
+  font-size: 3rem;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.profile-card h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.tagline {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.glow-hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+  margin: 1.5rem 0;
+}
+
+.profile-details {
+  text-align: left;
+}
+
+.profile-details h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--neon-purple);
+  text-shadow: 0 0 5px rgba(157, 78, 221, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tech-tag {
+  background: rgba(157, 78, 221, 0.1);
+  border: 1px solid rgba(157, 78, 221, 0.2);
+  color: var(--text-color);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+  background: rgba(157, 78, 221, 0.3);
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-purple);
+  transform: translateY(-1px);
+}
+
+.about-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  text-align: justify;
+}
+
+/* 學習時光軸 */
+.timeline-card h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.timeline-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  height: 95%;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--neon-purple), var(--neon-cyan), rgba(0, 242, 254, 0));
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-badge {
+  position: absolute;
+  left: -2.5rem;
+  top: 2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--bg-dark-accent);
+  border: 2px solid var(--neon-purple);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-badge {
+  border-color: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: scale(1.1);
+}
+
+.timeline-badge i {
+  font-size: 0.8rem;
+  color: #fff;
+}
+
+.timeline-content {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-content {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(0, 242, 254, 0.2);
+  transform: translateX(4px);
+}
+
+.timeline-content h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.timeline-date {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  display: inline-block;
+  margin-bottom: 0.6rem;
+}
+
+.timeline-content p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.text-cyan {
+  color: var(--neon-cyan);
+}
+
+/* ==========================================================================
+   7. 彈窗與表單 (Game Over Modal & Input Form)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 5, 10, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  border-color: var(--neon-pink);
+  box-shadow: 0 10px 40px rgba(255, 0, 127, 0.3), inset 0 0 15px rgba(255, 0, 127, 0.1);
+  padding: 2.5rem;
+}
+
+.modal-header h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 2.2rem;
+  margin-bottom: 0.8rem;
+  color: var(--neon-pink);
+  text-shadow: var(--glow-pink);
+}
+
+.modal-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.8rem;
+}
+
+.game-over-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.modal-stat {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.modal-stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.modal-stat .val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.text-green { color: var(--neon-green); text-shadow: var(--glow-green); }
+
+.name-entry-form {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.name-entry-form label {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#username-input {
+  width: 100%;
+  background: rgba(10, 10, 18, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.8rem 3rem 0.8rem 1rem;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  font-family: 'Orbitron', sans-serif;
+  transition: all 0.2s ease;
+}
+
+#username-input:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+.char-counter {
+  position: absolute;
+  right: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.error-msg {
+  color: var(--neon-pink);
+  font-size: 0.8rem;
+  min-height: 18px;
+  font-weight: 500;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   8. 行動裝置虛擬按鈕與響應式排版 (Mobile D-pad & Responsive)
+   ========================================================================== */
+.mobile-controller {
+  display: none;
+}
+
+/* 響應式佈局：當寬度小於 1024px 時收合左右面板 */
+@media (max-width: 1024px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+    gap: 1.5rem;
+  }
+  
+  .side-panel {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .side-panel > div {
+    flex: 1;
+  }
+  
+  .left-panel {
+    order: 2;
+  }
+  
+  .main-game-panel {
+    order: 1;
+  }
+  
+  .right-panel {
+    order: 3;
+  }
+  
+  .instructions {
+    display: none; /* 平板/手機版隱藏鍵盤說明 */
+  }
+
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 手機版直式排版 */
+@media (max-width: 600px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .content-container {
+    padding: 1rem;
+  }
+  
+  .side-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .side-panel > div {
+    padding: 0.8rem;
+  }
+  
+  .hold-container, .next-container {
+    height: auto;
+  }
+  
+  #hold-canvas, #next-canvas {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .stat-value {
+    font-size: 1.2rem;
+  }
+  
+  /* 行動端虛擬鍵盤顯示 */
+  .mobile-controller {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+    margin: 1.5rem auto 0 auto;
+    background: rgba(22, 22, 39, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    width: 160px;
+  }
+  
+  #btn-left { grid-column: 1; grid-row: 2; }
+  #btn-rotate { grid-column: 2; grid-row: 1; }
+  #btn-right { grid-column: 3; grid-row: 2; }
+  #btn-down { grid-column: 2; grid-row: 2; }
+  
+  .action-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+  }
+  
+  .ctrl-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--neon-cyan);
+    height: 44px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color 0.1s;
+  }
+  
+  .ctrl-btn:active {
+    background: rgba(0, 242, 254, 0.2);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px rgba(0, 242, 254, 0.4);
+  }
+  
+  .ctrl-btn.action {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    height: 40px;
+    color: var(--neon-purple);
+  }
+  
+  .ctrl-btn.action:active {
+    background: rgba(157, 78, 221, 0.2);
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 8px rgba(157, 78, 221, 0.4);
+    color: #fff;
+  }
+}
+
+/* ==========================================================================
+   9. 動畫效果定義 (Animations)
+   ========================================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes logo-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.05); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 242, 254, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
+}
+
+.animate-scale {
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse-glow 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { text-shadow: 0 0 5px rgba(255, 0, 127, 0.5), 0 0 10px rgba(255, 0, 127, 0.3); }
+  to { text-shadow: 0 0 15px rgba(255, 0, 127, 0.8), 0 0 30px rgba(255, 0, 127, 0.5); }
+}

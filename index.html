@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetris Arcade - 線上排行經典俄羅斯方塊</title>
+  <!-- Google Fonts: 引入復古電子與現代遊戲風格字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome 用於 icon 顯示 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 霓虹背景特效層 -->
+  <div class="neon-bg-glow"></div>
+
+  <!-- 導覽列 -->
+  <header>
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fa-solid fa-gamepad logo-icon"></i>
+        <span>TETRIS<span class="neon-text">ARCADE</span></span>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-target="game-view">
+          <i class="fa-solid fa-play"></i> 街機遊戲
+        </button>
+        <button class="nav-btn" data-target="leaderboard-view" id="nav-leaderboard-btn">
+          <i class="fa-solid fa-trophy"></i> 線上排行
+        </button>
+        <button class="nav-btn" data-target="portfolio-view">
+          <i class="fa-solid fa-user-tie"></i> 學習履歷
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主內容區 (SPA 分頁) -->
+  <main class="content-container">
+
+    <!-- A. 遊戲分頁 (Game View) -->
+    <section id="game-view" class="view-section active">
+      <div class="game-layout">
+        
+        <!-- 左側面板：暫存與操作說明 -->
+        <div class="side-panel left-panel">
+          <div class="glass-panel hold-container">
+            <h3 class="panel-title">HOLD 暫存</h3>
+            <div class="canvas-wrapper">
+              <canvas id="hold-canvas" width="120" height="120"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-panel instructions">
+            <h3 class="panel-title">操作說明</h3>
+            <div class="control-guide">
+              <div class="guide-row"><span class="key">A</span> / <span class="key"><i class="fa-solid fa-arrow-left"></i></span> <span>向左移動</span></div>
+              <div class="guide-row"><span class="key">D</span> / <span class="key"><i class="fa-solid fa-arrow-right"></i></span> <span>向右移動</span></div>
+              <div class="guide-row"><span class="key">W</span> / <span class="key"><i class="fa-solid fa-arrow-up"></i></span> <span>旋轉方塊</span></div>
+              <div class="guide-row"><span class="key">S</span> / <span class="key"><i class="fa-solid fa-arrow-down"></i></span> <span>軟降 (加速)</span></div>
+              <div class="guide-row"><span class="key">Space</span> <span>硬降 (直接落下)</span></div>
+              <div class="guide-row"><span class="key">C</span> / <span class="key">Shift</span> <span>暫存方塊 (Hold)</span></div>
+              <div class="guide-row"><span class="key">P</span> <span>暫停遊戲</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中間面板：主遊戲畫面 -->
+        <div class="main-game-panel">
+          <div class="game-header">
+            <div class="db-status-badge" id="db-status-badge">
+              <i class="fa-solid fa-database"></i> <span>連線中...</span>
+            </div>
+            <button id="sound-btn" class="icon-btn" title="切換音效">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </div>
+
+          <div class="board-wrapper">
+            <div class="pause-overlay" id="pause-overlay">
+              <div class="pause-content">
+                <h2>PAUSED</h2>
+                <p>按下 P 鍵或點擊下方按鈕繼續</p>
+                <button id="resume-btn" class="arcade-btn green">繼續遊戲</button>
+              </div>
+            </div>
+            <canvas id="game-canvas" width="300" height="600"></canvas>
+          </div>
+
+          <div class="game-controls">
+            <button id="start-btn" class="arcade-btn purple"><i class="fa-solid fa-play"></i> 開始遊戲</button>
+            <button id="pause-btn" class="arcade-btn blue" disabled><i class="fa-solid fa-pause"></i> 暫停</button>
+            <button id="reset-btn" class="arcade-btn red"><i class="fa-solid fa-rotate-right"></i> 重置</button>
+          </div>
+        </div>
+
+        <!-- 右側面板：下一個方塊與分數統計 -->
+        <div class="side-panel right-panel">
+          <div class="glass-panel next-container">
+            <h3 class="panel-title">NEXT 下一個</h3>
+            <div class="canvas-wrapper">
+              <canvas id="next-canvas" width="120" height="120"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-panel stats-container">
+            <h3 class="panel-title">統計數據</h3>
+            <div class="stat-box">
+              <span class="stat-label">SCORE 分數</span>
+              <span class="stat-value" id="score-val">000000</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">LEVEL 等級</span>
+              <span class="stat-value" id="level-val">1</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">LINES 消行</span>
+              <span class="stat-value" id="lines-val">0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 手機虛擬控制面板 (僅在行動裝置顯示) -->
+      <div class="mobile-controller">
+        <div class="dpad">
+          <button id="btn-left" class="ctrl-btn"><i class="fa-solid fa-arrow-left"></i></button>
+          <button id="btn-rotate" class="ctrl-btn"><i class="fa-solid fa-rotate"></i></button>
+          <button id="btn-right" class="ctrl-btn"><i class="fa-solid fa-arrow-right"></i></button>
+          <button id="btn-down" class="ctrl-btn"><i class="fa-solid fa-arrow-down"></i></button>
+        </div>
+        <div class="action-keys">
+          <button id="btn-hold" class="ctrl-btn action"><i class="fa-solid fa-repeat"></i> HOLD</button>
+          <button id="btn-drop" class="ctrl-btn action"><i class="fa-solid fa-angles-down"></i> DROP</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- B. 排行榜分頁 (Leaderboard View) -->
+    <section id="leaderboard-view" class="view-section">
+      <div class="leaderboard-container glass-panel">
+        <div class="leaderboard-header">
+          <h2><i class="fa-solid fa-trophy text-gold"></i> 全球即時排行榜</h2>
+          <p>前 10 名最高分殿堂玩家</p>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th style="width: 15%">名次</th>
+                <th style="width: 35%">玩家暱稱</th>
+                <th style="width: 25%">最高分數</th>
+                <th style="width: 25%">消除行數</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-tbody">
+              <!-- 動態載入排行資料 -->
+              <tr>
+                <td colspan="4" class="text-center loading-text">
+                  <i class="fa-solid fa-spinner fa-spin"></i> 排行榜載入中...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="leaderboard-footer">
+          <span id="db-connection-type"><i class="fa-solid fa-network-wired"></i> 連線狀態: 偵測中</span>
+          <button id="refresh-leaderboard" class="arcade-btn mini blue"><i class="fa-solid fa-arrows-rotate"></i> 重新整理</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- C. 履歷與學習足跡分頁 (Portfolio View) -->
+    <section id="portfolio-view" class="view-section">
+      <div class="portfolio-grid">
+        
+        <!-- 個人基本資料 -->
+        <div class="glass-panel profile-card">
+          <div class="avatar-area">
+            <div class="avatar-ring">
+              <i class="fa-solid fa-user-astronaut profile-icon"></i>
+            </div>
+            <h2>網頁全端開發者</h2>
+            <p class="tagline">精益求精，用代碼編織無極限的創意與體驗</p>
+          </div>
+          
+          <hr class="glow-hr">
+          
+          <div class="profile-details">
+            <h3><i class="fa-solid fa-code"></i> 核心技術棧</h3>
+            <div class="tech-tags">
+              <span class="tech-tag">HTML5 Canvas</span>
+              <span class="tech-tag">Vanilla JS (ES6+)</span>
+              <span class="tech-tag">CSS3 / Neon Style</span>
+              <span class="tech-tag">Node.js</span>
+              <span class="tech-tag">Express.js</span>
+              <span class="tech-tag">MongoDB Atlas</span>
+              <span class="tech-tag">RESTful API</span>
+              <span class="tech-tag">Web Audio API</span>
+            </div>
+            
+            <h3><i class="fa-solid fa-circle-info"></i> 關於本專案</h3>
+            <p class="about-desc">
+              本專案是全端網頁程式設計的精華縮影，以經典的 2D 幾何消去遊戲「俄羅斯方塊」為載體，實作了高效的前端 Canvas 二維矩陣渲染與 Wall Kick 碰撞排除演算法，並串接 Express 後端與 MongoDB Atlas 雲端資料庫，建構即時的分數排行上傳與展示。
+            </p>
+          </div>
+        </div>
+
+        <!-- 學習時光軸 -->
+        <div class="glass-panel timeline-card">
+          <h2><i class="fa-solid fa-route text-cyan"></i> 網頁全端開發學習足跡</h2>
+          <p class="timeline-subtitle">本學期網頁技術開發的蜕變歷程</p>
+          
+          <div class="timeline">
+            <!-- 節點 1 -->
+            <div class="timeline-item">
+              <div class="timeline-badge"><i class="fa-solid fa-cubes"></i></div>
+              <div class="timeline-content">
+                <h4>階段一：網頁靜態佈局與樣式美學</h4>
+                <span class="timeline-date">Week 1 - 5</span>
+                <p>熟練 HTML5 語意標籤架構與 CSS3 Flexbox/Grid 響應式佈局。學習 CSS 變數、陰影、漸層色與過渡動畫，打下美觀的 UI 設計基礎。</p>
+              </div>
+            </div>
+            
+            <!-- 節點 2 -->
+            <div class="timeline-item">
+              <div class="timeline-badge"><i class="fa-solid fa-bolt"></i></div>
+              <div class="timeline-content">
+                <h4>階段二：JavaScript 核心與 DOM 互動</h4>
+                <span class="timeline-date">Week 6 - 9</span>
+                <p>深入非同步程式設計、ES6+ 語法及 DOM 事件監聽。實作前端互動邏輯，並透過 Canvas API 進行遊戲畫面的二維渲染控制。</p>
+              </div>
+            </div>
+            
+            <!-- 節點 3 -->
+            <div class="timeline-item">
+              <div class="timeline-badge"><i class="fa-solid fa-server"></i></div>
+              <div class="timeline-content">
+                <h4>階段三：Node.js Express 後端 API 建構</h4>
+                <span class="timeline-date">Week 10 - 13</span>
+                <p>使用 Node.js 與 Express 框架架設 RESTful API 伺服器。定義並校驗 POST/GET 連線，處理 CORS 跨域資源存取，實踐前後端整合。</p>
+              </div>
+            </div>
+            
+            <!-- 節點 4 -->
+            <div class="timeline-item">
+              <div class="timeline-badge"><i class="fa-solid fa-cloud-sun-rain"></i></div>
+              <div class="timeline-content">
+                <h4>階段四：NoSQL 資料庫儲存與雲端發布</h4>
+                <span class="timeline-date">Week 14 - 18</span>
+                <p>設定 MongoDB Atlas 雲端資料庫並使用 Mongoose 進行資料映射管理。為專案部署至雲端生產環境，達成具備持久化排行榜的完整全端網頁應用。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 彈窗互動區 (Game Over Modal) -->
+  <div class="modal-overlay" id="game-over-modal">
+    <div class="modal-content glass-panel animate-scale">
+      <div class="modal-header">
+        <h2 class="neon-text animate-pulse">GAME OVER</h2>
+        <p>戰績輝煌！您的分數已被載入街機記錄中</p>
+      </div>
+      
+      <div class="game-over-stats">
+        <div class="modal-stat">
+          <span class="label">最終分數</span>
+          <span class="val text-green" id="modal-score">0</span>
+        </div>
+        <div class="modal-stat">
+          <span class="label">消行數</span>
+          <span class="val text-cyan" id="modal-lines">0</span>
+        </div>
+      </div>
+      
+      <div class="name-entry-form">
+        <label for="username-input">請輸入您的勇士暱稱（限 10 字元）：</label>
+        <div class="input-wrapper">
+          <input type="text" id="username-input" maxlength="10" placeholder="勇士名字..." autocomplete="off">
+          <span class="char-counter" id="char-counter">0/10</span>
+        </div>
+        <div class="error-msg" id="modal-error-msg"></div>
+        
+        <div class="modal-actions">
+          <button id="submit-score-btn" class="arcade-btn green"><i class="fa-solid fa-paper-plane"></i> 送出成績</button>
+          <button id="modal-close-btn" class="arcade-btn red"><i class="fa-solid fa-xmark"></i> 放棄</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Tetris Arcade Project. All Rights Reserved. Designed by Antigravity</p>
+  </footer>
+
+  <!-- 前端腳本載入 -->
+  <script src="js/api.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
