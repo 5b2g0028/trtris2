@@ -1,7 +1,7 @@
 /**
  * Tetris Arcade - API Client Module
  */
-const API_BASE = '/api/scores';
+const API_BASE = 'https://tetris-backend-jaym.onrender.com/api/scores';
 
 const API = {
   /**
